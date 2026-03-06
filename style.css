@@ -1,0 +1,112 @@
+:root {
+    --paichai-blue: #00467F; /* 배재의 상징 남색 */
+    --light-blue: #E3F2FD;
+    --white: #ffffff;
+}
+
+body {
+    background-color: var(--light-blue);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+.container {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* 클레이모피즘 핵심 스타일 */
+.clay-card {
+    background: var(--white);
+    width: 100%;
+    max-width: 350px;
+    padding: 30px;
+    border-radius: 35px;
+    text-align: center;
+    
+    /* 안쪽 그림자와 바깥 그림자의 조화 */
+    box-shadow: 
+        20px 20px 40px rgba(0, 70, 127, 0.15),
+        -10px -10px 20px rgba(255, 255, 255, 0.8),
+        inset 5px 5px 10px rgba(0, 0, 0, 0.05),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.5);
+}
+
+.logo {
+    width: 60px;
+    margin-bottom: 15px;
+}
+
+h1 {
+    color: var(--paichai-blue);
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+#date-display {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+#menu-container {
+    margin: 25px 0;
+    padding: 20px;
+    background: var(--light-blue);
+    border-radius: 25px;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 안쪽으로 쏙 들어간 느낌 */
+    box-shadow: inset 8px 8px 15px rgba(0, 70, 127, 0.1), 
+                inset -8px -8px 15px rgba(255, 255, 255, 0.7);
+}
+
+#menu-text {
+    color: var(--paichai-blue);
+    font-weight: 600;
+    line-height: 2;
+    white-space: pre-wrap;
+}
+
+footer p {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: #bbb;
+    margin-top: 20px;
+}
+
+/* 로딩 애니메이션 살짝 */
+.loading {
+    opacity: 0.6;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.3; }
+}
+
+/* ... 기존 스타일 유지 ... */
+
+.notice {
+    font-size: 0.8rem;
+    color: #999; /* 회색 글자 */
+    font-weight: 400;
+    margin-top: 20px;
+    padding: 0 10px;
+    line-height: 1.4;
+    word-break: keep-all; /* 단어 단위로 줄바꿈 되어 예쁘게 나옴 */
+}
+
+/* 모바일 대응을 위한 반응형 폰트 조절 */
+@media (max-width: 380px) {
+    h1 { font-size: 1.5rem; }
+    .notice { font-size: 0.7rem; }
+}
