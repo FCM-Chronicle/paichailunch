@@ -34,8 +34,8 @@ async function init() {
 
         // API 호출
         try {
-            const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.API_KEY}&Type=json&ATPT_OFIC_CODE=${CONFIG.OFFICE_CODE}&SD_SCHUL_CODE=${CONFIG.SCHOOL_CODE}&MLSV_YMD=${yyyymmdd}`;
-            const response = await fetch(url);
+// 기존 url 코드 대신 이걸 써봐
+const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.API_KEY}&Type=json&ATPT_OFIC_CODE=${CONFIG.OFFICE_CODE}&SD_SCHUL_CODE=${CONFIG.SCHOOL_CODE}&MLSV_YMD=${yyyymmdd}&MMEAL_SC_NM=중식`;            const response = await fetch(url);
             const data = await response.json();
 
             if (data.mealServiceDietInfo) {
