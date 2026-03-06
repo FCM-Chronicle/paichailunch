@@ -5,72 +5,52 @@ const CONFIG = {
 };
 
 async function init() {
-    let now = new Date();
-    
-    // 1. 저녁 7시(19시) 이후면 "내일" 기준으로 탐색 시작
-    if (now.getHours() >= 19) {
-        now.setDate(now.getDate() + 1);
+    let targetDate = new Date();
+    // 저녁 7시 이후면 다음날부터 찾기
+    if (targetDate.getHours() >= 19) {
+        targetDate.setDate(targetDate.getDate() + 1);
     }
 
-    let targetDate = new Date(now); 
     let menuFound = false;
 
-    // 2. 최대 7일까지 뒤져봄 (주말/연휴 돌파용)
+    // 7일간 점심 메뉴를 찾을 때까지 루프
     for (let i = 0; i < 7; i++) {
-        const year = targetDate.getFullYear();
-        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-        const date = String(targetDate.getDate()).padStart(2, '0');
-        const yyyymmdd = `${year}${month}${date}`;
-
-        // 캐시 확인
-        const cachedMenu = localStorage.getItem('bj_menu');
-        const cachedDate = localStorage.getItem('bj_date');
-
-        if (cachedMenu && cachedDate === yyyymmdd) {
-            renderPage(yyyymmdd, cachedMenu);
-            menuFound = true;
-            break;
-        }
-
-        // API 호출
+        const yyyymmdd = targetDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
         try {
-            // script.js 내 API 호출 URL 부분
-const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.API_KEY}&Type=json&ATPT_OFIC_CODE=${CONFIG.OFFICE_CODE}&SD_SCHUL_CODE=${CONFIG.SCHOOL_CODE}&MLSV_YMD=${yyyymmdd}&MMEAL_SC_NM=중식`;
+            const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.API_KEY}&Type=json&ATPT_OFIC_CODE=${CONFIG.OFFICE_CODE}&SD_SCHUL_CODE=${CONFIG.SCHOOL_CODE}&MLSV_YMD=${yyyymmdd}&MMEAL_SC_NM=중식`;
+            
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.mealServiceDietInfo) {
-                let rawMenu = data.mealServiceDietInfo[1].row[0].DDISH_NM;
-                let cleanMenu = rawMenu.replace(/\([^)]*\)/g, '').replace(/<br\/>/g, '\n').trim();
-                
-                localStorage.setItem('bj_menu', cleanMenu);
-                localStorage.setItem('bj_date', yyyymmdd);
+                const rawMenu = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+                const cleanMenu = rawMenu.replace(/\([^)]*\)/g, '').replace(/<br\/>/g, '\n').trim();
                 
                 renderPage(yyyymmdd, cleanMenu);
                 menuFound = true;
-                break; 
-            } else {
-                // 오늘 데이터 없으면 다음날로 세팅하고 루프 계속
-                targetDate.setDate(targetDate.getDate() + 1);
+                break; // 찾았으면 탈출
             }
         } catch (e) {
-            console.error("연결 오류", e);
-            break;
+            console.error("API 호출 실패:", e);
         }
+        
+        // 데이터 없으면 다음 날짜로 이동
+        targetDate.setDate(targetDate.getDate() + 1);
     }
 
     if (!menuFound) {
-        document.getElementById('menu-text').innerText = "당분간 급식 정보가 없네.\n방학인가?";
-        document.getElementById('menu-text').classList.remove('loading');
+        renderPage("", "당분간 점심 급식 정보가 없네.\n방학이거나 나이스 점검 중일지도!");
     }
 }
 
 function renderPage(dateStr, menu) {
-    // yyyymmdd -> yyyy년 mm월 dd일 변환
-    const y = dateStr.substring(0, 4);
-    const m = dateStr.substring(4, 6);
-    const d = dateStr.substring(6, 8);
-    
-    document.getElementById('date-display').innerText = `${y}년 ${m}월 ${d}일`;
+    if (dateStr) {
+        const y = dateStr.substring(0, 4);
+        const m = dateStr.substring(4, 6);
+        const d = dateStr.substring(6, 8);
+        document.getElementById('date-display').innerText = `${y}년 ${m}월 ${d}일`;
+    }
     const display = document.getElementById('menu-text');
     display.classList.remove('loading');
     display.innerText = menu;
