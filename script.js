@@ -1,7 +1,7 @@
 const CONFIG = {
     API_KEY: '4d58425cb8734f3283f65a283c482b29',
     OFFICE_CODE: 'B10',
-    SCHOOL_CODE: '7010077'
+    SCHOOL_CODE: '7010170'
 };
 
 async function init() {
