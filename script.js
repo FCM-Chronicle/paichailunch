@@ -48,8 +48,21 @@ function injectStyles() {
             background-color: #004080;
             color: white;
         }
+        .styled-btn.small {
+            padding: 5px 12px;
+            font-size: 0.9em;
+            border-radius: 8px;
+            box-shadow: 3px 3px 0 #111827;
+        }
+        .styled-btn.small:active {
+            transform: translate(3px, 3px);
+            box-shadow: 0 0 0 #111827;
+        }
         .nav-container { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 15px; }
-        #date-display { font-weight: bold; cursor: pointer; text-decoration: underline; font-size: 1.1em; }
+        .today-btn-container { text-align: center; margin-top: -10px; margin-bottom: 20px; }
+        #date-display.styled-btn {
+            min-width: 180px; /* 날짜 길이에 따른 너비 변화 방지 */
+        }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 20px; border-radius: 10px; width: 85%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .modal-list-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
@@ -86,6 +99,9 @@ function createNavigation() {
     const dateDisplay = document.getElementById('date-display');
     if (!dateDisplay || document.getElementById('nav-container')) return;
 
+    // 날짜 디스플레이를 버튼 스타일로 변경
+    dateDisplay.classList.add('styled-btn');
+
     const navContainer = document.createElement('div');
     navContainer.id = 'nav-container';
     navContainer.className = 'nav-container';
@@ -102,16 +118,23 @@ function createNavigation() {
 
     const todayBtn = document.createElement('button');
     todayBtn.innerText = '오늘';
-    todayBtn.className = 'styled-btn';
+    todayBtn.className = 'styled-btn small'; // 작은 버튼 클래스 적용
     todayBtn.onclick = () => findNearestMealFromToday(currentMealCode);
+
+    // '오늘' 버튼을 위한 별도 컨테이너 생성
+    const todayContainer = document.createElement('div');
+    todayContainer.className = 'today-btn-container';
+    todayContainer.appendChild(todayBtn);
 
     // 기존 날짜 요소를 네비게이션 컨테이너로 이동
     dateDisplay.parentNode.insertBefore(navContainer, dateDisplay);
     navContainer.appendChild(prevBtn);
     navContainer.appendChild(dateDisplay);
     navContainer.appendChild(nextBtn);
-    navContainer.appendChild(todayBtn);
     
+    // 네비게이션 컨테이너 바로 뒤에 '오늘' 버튼 컨테이너 추가
+    navContainer.insertAdjacentElement('afterend', todayContainer);
+
     // 날짜 클릭 시 모달 열기
     dateDisplay.onclick = openModal;
 }
