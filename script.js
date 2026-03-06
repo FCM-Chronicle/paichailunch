@@ -7,7 +7,8 @@ const CONFIG = {
 async function init() {
     let targetDate = new Date();
     // 금요일 7시(19시) 이후면 월요일로 점프하기 위한 로직
-    if (targetDate.getHours() >= 19) {
+    // 오후 6시(18시) 이후면 다음날로 점프하기 위한 로직
+    if (targetDate.getHours() >= 18) {
         targetDate.setDate(targetDate.getDate() + 1);
     }
 
@@ -15,10 +16,13 @@ async function init() {
 
     // 최대 7일까지 탐색
     for (let i = 0; i < 7; i++) {
-        const yyyymmdd = targetDate.toISOString().slice(0, 10).replace(/-/g, "");
+        const year = targetDate.getFullYear();
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const day = String(targetDate.getDate()).padStart(2, '0');
+        const yyyymmdd = `${year}${month}${day}`;
         
         try {
-            const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.API_KEY}&Type=json&ATPT_OFIC_CODE=${CONFIG.OFFICE_CODE}&SD_SCHUL_CODE=${CONFIG.SCHOOL_CODE}&MLSV_YMD=${yyyymmdd}&MMEAL_SC_NM=중식`;
+            const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${CONFIG.OFFICE_CODE}&SD_SCHUL_CODE=${CONFIG.SCHOOL_CODE}&MLSV_YMD=${yyyymmdd}&MMEAL_SC_CODE=2`;            
             
             const response = await fetch(url);
             
@@ -35,6 +39,8 @@ async function init() {
                 renderPage(yyyymmdd, cleanMenu);
                 menuFound = true;
                 break; 
+            } else {
+                console.log(`${yyyymmdd}: 급식 데이터가 없습니다. (주말, 공휴일 등)`);
             }
         } catch (e) {
             console.error("데이터 가져오기 실패:", e);
